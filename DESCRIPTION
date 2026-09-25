@@ -1,0 +1,38 @@
+Package: fidms
+Title: Process GC-MS/FID Peak Tables into Client Reports
+Version: 0.0.0.9000
+Authors@R: 
+    person("Philip", "Bulsink", , "pbulsink@example.com", role = c("aut", "cre"))
+Description: Replaces the "Automated Polyarc" Excel/VBA workflow. Parses
+    Agilent FID and MSD peak tables plus MSD library-search exports, aligns
+    the FID and MSD retention-time axes, identifies and interpolates
+    compounds, quantifies them against a calibration table, classifies them
+    into chemical families, and writes the client-facing Total Compound and
+    Summary reports as Excel or PDF. Includes a local Shiny front end.
+License: MIT + file LICENSE
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+Config/roxygen2/version: 8.1.0
+Depends: 
+    R (>= 4.1)
+Imports: 
+    chromConverter,
+    dplyr,
+    GCalignR,
+    nnls,
+    openxlsx,
+    rlang,
+    stats,
+    stringr,
+    tibble,
+    tidyr,
+    utils
+Suggests: 
+    bslib,
+    DT,
+    quarto,
+    shiny,
+    testthat (>= 3.0.0),
+    withr
+Config/testthat/edition: 3
+LazyData: true

@@ -1,0 +1,5 @@
+.Rproj.user
+
+*.D/
+cobertura.xml
+reference/
