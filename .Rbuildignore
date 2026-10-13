@@ -2,3 +2,6 @@
 ^\.Rproj\.user$
 design/
 reference/
+^data-raw/capture_app_screenshots\.R$
+^vignettes/.*\.html$
+^data-raw/render_pdf_page\.R$

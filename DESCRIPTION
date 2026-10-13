@@ -29,10 +29,13 @@ Imports:
     utils
 Suggests: 
     bslib,
+    knitr,
     DT,
     quarto,
+    rmarkdown,
     shiny,
     testthat (>= 3.0.0),
     withr
 Config/testthat/edition: 3
+VignetteBuilder: knitr
 LazyData: true

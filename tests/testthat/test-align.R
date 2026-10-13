@@ -8,9 +8,11 @@ test_that(".find_rt_shift recovers a known synthetic shift", {
   fid_rt <- sort(runif(60, 1, 30))
   true_shift <- -0.02
   msd_rt <- fid_rt[1:50] + true_shift
-  s <- .find_rt_shift(fid_rt, msd_rt,
-                     fidms_params(expected_shift = 0, shift_window = 0.1,
-                                  shift_step = 0.001))
+  s <- .find_rt_shift(
+    fid_rt,
+    msd_rt,
+    fidms_params(expected_shift = 0, shift_window = 0.1, shift_step = 0.001)
+  )
   expect_equal(s$shift, true_shift, tolerance = 0.003)
 })
 
@@ -27,7 +29,10 @@ test_that(".merge_close_peaks labels merged rows with a range", {
   fid <- .read_fid_peaks(test_path("fixtures", "FIDpeaks.csv"))
   msd <- .read_msd_peaks(test_path("fixtures", "MSDpeaks.csv"))
   search <- .read_msd_search(test_path("fixtures", "MSDsearch.csv"))
-  p <- .merge_close_peaks(.join_msd_identity(.align_peaks(fid, msd)$combined, search))
+  p <- .merge_close_peaks(.join_msd_identity(
+    .align_peaks(fid, msd)$combined,
+    search
+  ))
   expect_lte(nrow(p), nrow(fid))
   expect_true(all(grepl(" - ", p$peak_label[p$combined_peak])))
   expect_equal(sum(p$area), sum(fid$area), tolerance = 1e-6)

@@ -1,7 +1,14 @@
 test_that(".classify_family uses names then formula heuristics", {
   peaks <- data.frame(
-    name = c("Benzene", "Cyclohexane", "Hexane", "Pentane, 2-methyl-",
-             "1-Hexene", "Ethanol", NA),
+    name = c(
+      "Benzene",
+      "Cyclohexane",
+      "Hexane",
+      "Pentane, 2-methyl-",
+      "1-Hexene",
+      "Ethanol",
+      NA
+    ),
     formula = c("C6H6", "C6H12", "C6H14", "C6H14", "C6H12", "C2H6O", "C10H22"),
     stringsAsFactors = FALSE
   )

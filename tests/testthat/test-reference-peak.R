@@ -3,8 +3,12 @@ make_peaks <- function() {
     peak = 1:6,
     peak_label = c("1", "2", "3", "4", "5", "6 - 8"),
     name = c(
-      "Hexane", "Toluene", "Unknown, Interpolated", "Octane",
-      "Methane, dichloro-", "Unknown, Extrapolated Combined FID Peaks"
+      "Hexane",
+      "Toluene",
+      "Unknown, Interpolated",
+      "Octane",
+      "Methane, dichloro-",
+      "Unknown, Extrapolated Combined FID Peaks"
     ),
     formula = c("C6H14", "C7H8", "C3H8", "C8H18", "CH2Cl2", "C20H42"),
     area = c(1000, 10000, 50000, 4000, 30000, 2000),
@@ -28,14 +32,26 @@ test_that("halogen, B, P and Si disqualify a peak but O, N and S do not", {
   p <- make_peaks()[1, ]
   allowed <- c("C6H14O", "C6H15N", "C6H14S")
   for (f in allowed) {
-    q <- cbind(p[, c("name", "area", "score", "combined_peak", "peak_label")],
-               .parse_formula(f))
+    q <- cbind(
+      p[, c("name", "area", "score", "combined_peak", "peak_label")],
+      .parse_formula(f)
+    )
     expect_true(.reference_peak_ok(q), info = f)
   }
-  blocked <- c("C6H13Cl", "C6H13F", "C6H13Br", "C6H13I", "C6H15B", "C6H15P", "C6H15Si")
+  blocked <- c(
+    "C6H13Cl",
+    "C6H13F",
+    "C6H13Br",
+    "C6H13I",
+    "C6H15B",
+    "C6H15P",
+    "C6H15Si"
+  )
   for (f in blocked) {
-    q <- cbind(p[, c("name", "area", "score", "combined_peak", "peak_label")],
-               .parse_formula(f))
+    q <- cbind(
+      p[, c("name", "area", "score", "combined_peak", "peak_label")],
+      .parse_formula(f)
+    )
     expect_false(.reference_peak_ok(q), info = f)
   }
 })

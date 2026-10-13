@@ -18,8 +18,12 @@
 .fit_calibration_one <- function(d) {
   d <- d[!is.na(d$conc) & !is.na(d$resp), , drop = FALSE]
   r2 <- function(fit) if (is.null(fit)) NA_real_ else summary(fit)$r.squared
-  safe_lm <- function(f) tryCatch(stats::lm(f, data = d), error = function(e) NULL)
-  coefn <- function(fit, i) if (is.null(fit)) NA_real_ else unname(stats::coef(fit)[i])
+  safe_lm <- function(f) {
+    tryCatch(stats::lm(f, data = d), error = function(e) NULL)
+  }
+  coefn <- function(fit, i) {
+    if (is.null(fit)) NA_real_ else unname(stats::coef(fit)[i])
+  }
 
   m1 <- safe_lm(conc ~ resp + 0)
   m2 <- safe_lm(conc ~ resp)
@@ -85,8 +89,12 @@
   # hydrocarbon list, mirroring the workbook's nested IFNA.
   pick <- function(i) {
     pool <- if (is_oxy[i] && length(ox_rows)) ox_rows else hc_rows
-    if (!length(pool)) pool <- ox_rows
-    if (!length(pool)) return(NA_integer_)
+    if (!length(pool)) {
+      pool <- ox_rows
+    }
+    if (!length(pool)) {
+      return(NA_integer_)
+    }
     preceding <- pool[pool <= i]
     if (length(preceding)) max(preceding) else min(pool)
   }
@@ -123,18 +131,23 @@
 #' @return `peaks` with `amount_ug_ml` and `quant_basis` (`"Target"` or
 #'   `"Relative"`) columns added.
 #' @export
-calibrate <- function(peaks,
-                      style = c("slope", "slope_intercept", "quadratic", "internal"),
-                      targets = calibration_targets,
-                      points = calibration_points,
-                      reference_peak = NULL,
-                      dilution = 1,
-                      density = 1) {
+calibrate <- function(
+  peaks,
+  style = c("slope", "slope_intercept", "quadratic", "internal"),
+  targets = calibration_targets,
+  points = calibration_points,
+  reference_peak = NULL,
+  dilution = 1,
+  density = 1
+) {
   style <- match.arg(style)
 
   if (style == "internal") {
     if (is.null(reference_peak) || is.na(reference_peak)) {
-      stop("`reference_peak` is required for internal standardisation.", call. = FALSE)
+      stop(
+        "`reference_peak` is required for internal standardisation.",
+        call. = FALSE
+      )
     }
     peaks$amount_ug_ml <- .internal_amounts(peaks, reference_peak, density)
     peaks$quant_basis <- "Relative"
@@ -159,8 +172,10 @@ calibrate <- function(peaks,
   is_target <- !is.na(matched)
   row <- match(matched[is_target], curves$target)
   amount[is_target] <- pmax(
-    .apply_curve(peaks$area[is_target], curves[row, , drop = FALSE], style), 0
-  ) * dilution
+    .apply_curve(peaks$area[is_target], curves[row, , drop = FALSE], style),
+    0
+  ) *
+    dilution
 
   # Everything else is scaled off its governing target.
   gov <- .assign_target_rows(peaks, matched, targets)
@@ -215,7 +230,12 @@ calibrate <- function(peaks,
 #' @return A character vector of compound names.
 #' @keywords internal
 .recovery_excluded <- function(exclude_methanol = FALSE) {
-  base <- c("Methylene chloride", "Methane, dichloro-", "Acetonitrile", "Solvent")
+  base <- c(
+    "Methylene chloride",
+    "Methane, dichloro-",
+    "Acetonitrile",
+    "Solvent"
+  )
   if (exclude_methanol) c(base, "Methyl Alcohol", "Methanol") else base
 }
 
@@ -230,22 +250,33 @@ calibrate <- function(peaks,
 #' @return A tibble with one row per style and columns `style`, `gc_recovery`
 #'   and `total_recovery` (GC plus the non-GC methanol and water contributions).
 #' @keywords internal
-.calibration_recovery <- function(peaks, info,
-                                 targets = calibration_targets,
-                                 points = calibration_points,
-                                 reference_peak = NULL) {
+.calibration_recovery <- function(
+  peaks,
+  info,
+  targets = calibration_targets,
+  points = calibration_points,
+  reference_peak = NULL
+) {
   non_gc <- info$methanol_wt_pct + info$water_wt_pct
   drop <- .recovery_excluded(info$methanol_wt_pct > 0)
   key <- function(x) gsub("[^a-z0-9]", "", tolower(ifelse(is.na(x), "", x)))
 
   one <- function(style) {
     q <- tryCatch(
-      calibrate(peaks, style = style, targets = targets, points = points,
-                reference_peak = reference_peak, dilution = info$dilution,
-                density = info$density),
+      calibrate(
+        peaks,
+        style = style,
+        targets = targets,
+        points = points,
+        reference_peak = reference_peak,
+        dilution = info$dilution,
+        density = info$density
+      ),
       error = function(e) NULL
     )
-    if (is.null(q)) return(NA_real_)
+    if (is.null(q)) {
+      return(NA_real_)
+    }
     keep <- !key(q$name) %in% key(drop)
     sum(q$amount_ug_ml[keep], na.rm = TRUE) / 10000 / info$density
   }

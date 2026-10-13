@@ -75,7 +75,11 @@
 #' @param min_area_percent Minimum share of total FID area, in percent.
 #' @return A logical vector, one element per peak.
 #' @keywords internal
-.reference_peak_ok <- function(peaks, min_score = 30, min_area_percent = 0.001) {
+.reference_peak_ok <- function(
+  peaks,
+  min_score = 30,
+  min_area_percent = 0.001
+) {
   named <- !is.na(peaks$name) & nzchar(peaks$name)
   scored <- !is.na(peaks$score) & peaks$score >= min_score
 

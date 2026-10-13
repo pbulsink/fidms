@@ -9,12 +9,22 @@
 .read_agilent_csv <- function(path) {
   lines <- readLines(path, warn = FALSE, encoding = "UTF-8")
   lines <- sub("^\ufeff", "", lines)
-  header <- which(!startsWith(trimws(lines), "#") & nzchar(trimws(gsub(",", "", lines))))[1]
+  header <- which(
+    !startsWith(trimws(lines), "#") & nzchar(trimws(gsub(",", "", lines)))
+  )[1]
   if (is.na(header)) {
     stop("No header row found in ", path, call. = FALSE)
   }
+  body <- lines[header:length(lines)]
+  # Agilent data rows end in a trailing comma that the header lacks, which
+  # makes read.csv() treat the first column as row names; pad the header.
+  n_hdr <- lengths(regmatches(body[1], gregexpr(",", body[1])))
+  n_row <- lengths(regmatches(body[2], gregexpr(",", body[2])))
+  if (length(body) > 1 && n_row > n_hdr) {
+    body[1] <- paste0(body[1], strrep(",", n_row - n_hdr))
+  }
   out <- utils::read.csv(
-    text = paste(lines[header:length(lines)], collapse = "\n"),
+    text = paste(body, collapse = "\n"),
     check.names = FALSE,
     stringsAsFactors = FALSE,
     na.strings = c("NA", "")
@@ -24,8 +34,12 @@
 }
 
 .drop_blank_rows <- function(df) {
-  if (nrow(df) == 0) return(df)
-  blank <- apply(df, 1, function(r) all(is.na(r) | !nzchar(trimws(as.character(r)))))
+  if (nrow(df) == 0) {
+    return(df)
+  }
+  blank <- apply(df, 1, function(r) {
+    all(is.na(r) | !nzchar(trimws(as.character(r))))
+  })
   df[!blank, , drop = FALSE]
 }
 
@@ -63,7 +77,11 @@
   .check_columns(raw, required, "MSD peak table")
   out <- tibble::tibble(
     peak = as.integer(raw[["Peak"]]),
-    name = if ("Name" %in% names(raw)) as.character(raw[["Name"]]) else NA_character_,
+    name = if ("Name" %in% names(raw)) {
+      as.character(raw[["Name"]])
+    } else {
+      NA_character_
+    },
     rt_start = as.numeric(raw[["Start X"]]),
     rt = as.numeric(raw[["Center X"]]),
     rt_end = as.numeric(raw[["End X"]]),
@@ -95,7 +113,11 @@
     score = suppressWarnings(as.numeric(raw[["Score"]])),
     cas = as.character(pick("CAS ID"))
   )
-  out <- out[!is.na(out$rt) & !is.na(out$formula) & nzchar(out$formula), , drop = FALSE]
+  out <- out[
+    !is.na(out$rt) & !is.na(out$formula) & nzchar(out$formula),
+    ,
+    drop = FALSE
+  ]
   out[order(out$rt), , drop = FALSE]
 }
 
@@ -103,7 +125,8 @@
   missing <- setdiff(required, names(df))
   if (length(missing)) {
     stop(
-      what, " is missing required column(s): ",
+      what,
+      " is missing required column(s): ",
       paste(missing, collapse = ", "),
       call. = FALSE
     )

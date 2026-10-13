@@ -9,6 +9,8 @@
 run_app <- function(...) {
   rlang::check_installed(c("shiny", "bslib", "DT"))
   app_dir <- system.file("app", package = "fidms")
-  if (!nzchar(app_dir)) app_dir <- "inst/app"
+  if (!nzchar(app_dir)) {
+    app_dir <- "inst/app"
+  }
   shiny::runApp(app_dir, ...)
 }

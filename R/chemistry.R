@@ -13,7 +13,8 @@
   elements <- .tracked_elements()
   out <- matrix(
     0L,
-    nrow = length(formula), ncol = length(elements),
+    nrow = length(formula),
+    ncol = length(elements),
     dimnames = list(NULL, elements)
   )
   for (i in seq_along(formula)) {
@@ -32,7 +33,9 @@
 .parse_formula_one <- function(f) {
   f <- .expand_groups(f)
   m <- stringr::str_match_all(f, "([A-Z][a-z]?)(\\d*)")[[1]]
-  if (nrow(m) == 0) return(stats::setNames(integer(0), character(0)))
+  if (nrow(m) == 0) {
+    return(stats::setNames(integer(0), character(0)))
+  }
   el <- m[, 2]
   n <- ifelse(m[, 3] == "", 1L, suppressWarnings(as.integer(m[, 3])))
   tapply(n, el, sum)
@@ -67,7 +70,11 @@
 #' @keywords internal
 .molecular_weight <- function(formula) {
   counts <- .parse_formula(formula)
-  w <- atomic_weights[match(names(counts), atomic_weights$symbol), "mass", drop = TRUE]
+  w <- atomic_weights[
+    match(names(counts), atomic_weights$symbol),
+    "mass",
+    drop = TRUE
+  ]
   as.numeric(as.matrix(counts) %*% w)
 }
 
@@ -81,8 +88,15 @@
 #' @param degree Polynomial degree (default 6).
 #' @return An object of class `fidms_ri_model`.
 #' @keywords internal
-.fit_retention_index <- function(reference = rical_reference_points, degree = 6L) {
-  ref <- reference[!is.na(reference$time) & !is.na(reference$ri), , drop = FALSE]
+.fit_retention_index <- function(
+  reference = rical_reference_points,
+  degree = 6L
+) {
+  ref <- reference[
+    !is.na(reference$time) & !is.na(reference$ri),
+    ,
+    drop = FALSE
+  ]
   if (nrow(ref) < degree + 1L) {
     degree <- max(1L, nrow(ref) - 1L)
   }

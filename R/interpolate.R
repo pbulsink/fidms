@@ -88,8 +88,12 @@
     peaks$O[filled]
   )
   peaks$name[filled] <- ifelse(
-    peaks$combined_peak[filled] %in% TRUE,
-    "Unknown, Extrapolated Combined FID Peaks",
+    peaks$combined_peak[filled],
+    ifelse(
+      peaks$origin[filled] == "interpolated",
+      "Unknown, Interpolated Combined FID Peaks",
+      "Unknown, Extrapolated Combined FID Peaks"
+    ),
     ifelse(
       peaks$origin[filled] == "interpolated",
       "Unknown, Interpolated",
@@ -102,5 +106,5 @@
 
 .build_formula <- function(c_n, h_n, o_n) {
   part <- function(sym, n) ifelse(n > 0, paste0(sym, ifelse(n == 1, "", n)), "")
-  paste0(part("C", c_n), part("H", h_n), part("O", o_n))
+  paste(part("C", c_n), part("H", h_n), part("O", o_n))
 }

@@ -1,6 +1,7 @@
 test_that(".fit_calibration recovers a known linear relationship", {
   pts <- data.frame(
-    target = "fake", level = 1:5,
+    target = "fake",
+    level = 1:5,
     resp = c(100, 200, 300, 400, 500),
     conc = c(1, 2, 3, 4, 5) * 2
   )
@@ -19,7 +20,9 @@ test_that("packaged calibration fits are sane", {
 })
 
 test_that(".match_targets matches names and synonyms", {
-  peaks <- data.frame(name = c("Cyclohexane", "cyclohexane, methyl-", "Nonexistent"))
+  peaks <- data.frame(
+    name = c("Cyclohexane", "cyclohexane, methyl-", "Nonexistent")
+  )
   m <- .match_targets(peaks)
   expect_equal(m[1], "cyclohexane")
   expect_equal(m[2], "methylcyclohexane")
@@ -111,7 +114,12 @@ test_that(".recovery_excluded drops methanol only when reported separately", {
 
 test_that(".calibration_recovery reports every style", {
   p <- make_peaks()
-  info <- .sample_info("X", density = 0.85, methanol_wt_pct = 2, water_wt_pct = 1)
+  info <- .sample_info(
+    "X",
+    density = 0.85,
+    methanol_wt_pct = 2,
+    water_wt_pct = 1
+  )
   r <- .calibration_recovery(p, info, reference_peak = 1)
   expect_equal(r$style, c("slope", "slope_intercept", "quadratic", "internal"))
   expect_equal(r$total_recovery, r$gc_recovery + 3)

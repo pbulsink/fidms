@@ -13,9 +13,10 @@
   hetero <- rowSums(
     peaks[, c("N", "F", "Cl", "Br", "I", "P", "S", "B", "Si")],
     na.rm = TRUE
-  ) > 0
+  ) >
+    0
   oxy <- !is.na(peaks$O) & peaks$O > 0
-  dbe <- peaks$C - peaks$H / 2 + 1  # rings + double bonds
+  dbe <- peaks$C - peaks$H / 2 + 1 # rings + double bonds
 
   family <- rep(NA_character_, nrow(peaks))
 
@@ -38,7 +39,8 @@
   unk <- is.na(family)
   family[unk & !is.na(dbe) & dbe <= 0] <- ifelse(
     grepl("methyl|ethyl|propyl|iso|,", nm[unk & !is.na(dbe) & dbe <= 0]),
-    "Isoparaffin", "Paraffin"
+    "Isoparaffin",
+    "Paraffin"
   )
   family[is.na(family)] <- "Unknown Hydrocarbon"
 
