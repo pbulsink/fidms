@@ -2,7 +2,7 @@
 #'
 #' Replaces the VBA input boxes and `frmWater` user form.
 #'
-#' @param sample_id Client sample number (e.g. `"D319"`).
+#' @param sample_id Client sample number (e.g. `"Diesel-1"`).
 #' @param sample_name Sample description.
 #' @param project_code Project code used in the output file name.
 #' @param analyst Analyst initials; multiple analysts are slash-joined.
@@ -12,8 +12,8 @@
 #' @param dilution Dilution factor.
 #' @param report_date Report date.
 #' @return A list of class `fidms_sample`.
-#' @keywords internal
-.sample_info <- function(
+#' @export
+sample_info <- function(
   sample_id,
   sample_name = "",
   project_code = "",
@@ -46,7 +46,7 @@
 #' weight percents, GC recovery and the QC peak counts shown on both reports.
 #'
 #' @param peaks Quantified peak table from [calibrate()].
-#' @param info Sample metadata from [.sample_info()].
+#' @param info Sample metadata from [sample_info()].
 #' @param include_solvents Whether solvent peaks contribute to the summary.
 #' @param shift MS/FID offset time (minutes) reported as QC.
 #' @return A list with `peaks` (annotated), `families`, `elements`, `totals`

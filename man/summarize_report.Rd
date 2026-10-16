@@ -9,7 +9,7 @@ summarize_report(peaks, info, include_solvents = FALSE, shift = NA_real_)
 \arguments{
 \item{peaks}{Quantified peak table from \code{\link[=calibrate]{calibrate()}}.}
 
-\item{info}{Sample metadata from \code{\link[=.sample_info]{.sample_info()}}.}
+\item{info}{Sample metadata from \code{\link[=sample_info]{sample_info()}}.}
 
 \item{include_solvents}{Whether solvent peaks contribute to the summary.}
 

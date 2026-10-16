@@ -1,6 +1,6 @@
 test_that("process_sample runs end to end on the sample exports", {
-  info <- .sample_info(
-    "D319",
+  info <- sample_info(
+    "Diesel-1",
     "Test sample",
     "MD",
     "pbulsink",
@@ -28,7 +28,7 @@ test_that("process_sample runs end to end on the sample exports", {
 })
 
 test_that("external calibration errors when the sample has no targets", {
-  info <- .sample_info("D319", density = 0.85)
+  info <- sample_info("Diesel-1", density = 0.85)
   expect_error(
     process_sample(
       test_path("fixtures", "FIDpeaks.csv"),
@@ -132,7 +132,7 @@ test_that("total_compound_table degrades gracefully when class-ion columns are a
 
 test_that("excel report writes both sheets with the expected names", {
   skip_if_not_installed("openxlsx")
-  info <- .sample_info("D319", "Test", "MD", "pbulsink", density = 0.85)
+  info <- sample_info("Diesel-1", "Test", "MD", "pbulsink", density = 0.85)
   res <- process_sample(
     test_path("fixtures", "FIDpeaks.csv"),
     test_path("fixtures", "MSDpeaks.csv"),
@@ -146,13 +146,13 @@ test_that("excel report writes both sheets with the expected names", {
   expect_true(file.exists(path))
   expect_equal(
     openxlsx::getSheetNames(path),
-    c("D319 Total Compound Report", "D319 Summary Report")
+    c("Diesel-1 Total Compound Report", "Diesel-1 Summary Report")
   )
 })
 
 test_that("excel report adds an MS Class Features sheet when the result has feature data", {
   skip_if_not_installed("openxlsx")
-  info <- .sample_info("D319", "Test", "MD", "pbulsink", density = 0.85)
+  info <- sample_info("Diesel-1", "Test", "MD", "pbulsink", density = 0.85)
   res <- process_sample(
     test_path("fixtures", "FIDpeaks.csv"),
     test_path("fixtures", "MSDpeaks.csv"),
@@ -176,6 +176,10 @@ test_that("excel report adds an MS Class Features sheet when the result has feat
   write_excel_report(res, path)
   expect_equal(
     openxlsx::getSheetNames(path),
-    c("D319 Total Compound Report", "D319 Summary Report", "MS Class Features")
+    c(
+      "Diesel-1 Total Compound Report",
+      "Diesel-1 Summary Report",
+      "MS Class Features"
+    )
   )
 })

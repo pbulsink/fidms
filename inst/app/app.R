@@ -14,7 +14,7 @@ ui <- page_sidebar(
         textInput(
           "d_path",
           ".D directory path (optional)",
-          placeholder = "e.g. C:/data/D319.D"
+          placeholder = "e.g. C:/data/diesel.D"
         ),
         helpText(
           "If a .D directory is provided, its raw data.ms is used for ",
@@ -157,7 +157,7 @@ server <- function(input, output, session) {
   })
 
   info <- reactive({
-    fidms:::.sample_info(
+    sample_info(
       sample_id = input$sample_id,
       sample_name = input$sample_name,
       project_code = input$project_code,

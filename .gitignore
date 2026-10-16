@@ -3,3 +3,8 @@
 *.D/
 cobertura.xml
 reference/
+/Meta/
+data-raw/combined_library.msp
+design/oxygenate-extension-record.md
+dev/*
+/doc/

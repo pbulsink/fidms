@@ -246,7 +246,7 @@ calibrate <- function(
 #' normalised to 100% by construction.
 #'
 #' @inheritParams calibrate
-#' @param info Sample metadata from [.sample_info()].
+#' @param info Sample metadata from [sample_info()].
 #' @return A tibble with one row per style and columns `style`, `gc_recovery`
 #'   and `total_recovery` (GC plus the non-GC methanol and water contributions).
 #' @keywords internal

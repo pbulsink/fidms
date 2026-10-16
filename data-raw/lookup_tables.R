@@ -49,7 +49,7 @@ calibration_targets <- tibble::tibble(
   synonyms = raw_cal$Synonyms,
   type = tolower(trimws(raw_cal$Type)),
   rt = suppressWarnings(as.numeric(raw_cal$RT)),
-  ri = suppressWarnings(as.numeric(raw_cal[["RI (USE NIST SEARCH PROGRAM)"]])),
+  ri = suppressWarnings(as.numeric(raw_cal$RI)),
   carbon = suppressWarnings(as.integer(raw_cal$Carbon)),
   hydrogen = suppressWarnings(as.integer(raw_cal$Hydrogen)),
   oxygen = tidyr::replace_na(suppressWarnings(as.integer(raw_cal$Oxygen)), 0L)
@@ -68,6 +68,7 @@ rical_reference_points <- tibble::tibble(
   dplyr::filter(!is.na(time), !is.na(ri))
 
 # ---- chemical family name fragments ----------------------------------------
+# Saturates are picked up by CnH2n+2 so no need to list them here.
 chemical_family_terms <- tibble::tribble(
   ~family      , ~term          ,
   "Aromatic"   , "benzene"      ,
@@ -82,7 +83,7 @@ chemical_family_terms <- tibble::tribble(
   "Aromatic"   , "anisole"      ,
   "Aromatic"   , "thiophene"    ,
   "Aromatic"   , "pyridine"     ,
-  "Aromatic"   , "furan"        ,
+  "Naphthene"  , "cyclo"        ,
   "Naphthene"  , "cyclopropane" ,
   "Naphthene"  , "cyclobutane"  ,
   "Naphthene"  , "cyclopentane" ,
@@ -109,14 +110,9 @@ solvent_names <- c(
   "dichloromethane",
   "methylene chloride",
   "acetone",
-  "hexane",
-  "heptane",
   "carbon disulfide",
   "water",
-  "tetrahydrofuran",
-  "acetonitrile",
-  "pentane",
-  "toluene"
+  "acetonitrile"
 )
 
 usethis::use_data(

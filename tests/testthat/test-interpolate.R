@@ -36,6 +36,9 @@ test_that("interpolation fills every unidentified peak", {
 })
 
 test_that(".build_formula omits zero counts and the implicit 1", {
-  expect_equal(fidms:::.build_formula(1, 4, 0), "CH4")
-  expect_equal(fidms:::.build_formula(2, 6, 1), "C2H6O")
+  expect_equal(.build_formula(1, 4, 0), "C H4")
+  expect_equal(.build_formula(2, 6, 1), "C2 H6 O")
+  expect_equal(.build_formula(0, 1, 0), "H")
+  expect_equal(.build_formula(0, 0, 0), "")
+  expect_equal(.build_formula(2, 6, 2), "C2 H6 O2")
 })

@@ -28,7 +28,7 @@ test_that("both engines match a comparable number of peaks", {
 
 test_that("process_sample runs with the GCalignR engine", {
   skip_if_not_installed("GCalignR")
-  info <- .sample_info("D319", "Test", "MD", "pbulsink", density = 0.85)
+  info <- sample_info("Diesel-1", "Test", "MD", "pbulsink", density = 0.85)
   res <- process_sample(
     test_path("fixtures", "FIDpeaks.csv"),
     test_path("fixtures", "MSDpeaks.csv"),

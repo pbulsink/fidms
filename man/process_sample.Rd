@@ -22,7 +22,7 @@ process_sample(
 \arguments{
 \item{fid_path, msd_path, search_path}{Paths to the three CSV exports.}
 
-\item{info}{Sample metadata from \code{\link[=.sample_info]{.sample_info()}}.}
+\item{info}{Sample metadata from \code{\link[=sample_info]{sample_info()}}.}
 
 \item{params}{Processing parameters from \code{\link[=fidms_params]{fidms_params()}}.}
 

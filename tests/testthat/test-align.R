@@ -1,5 +1,5 @@
 test_that(".greedy_match pairs nearest within tolerance, one-to-one", {
-  m <- fidms:::.greedy_match(c(1, 2, 3), c(1.01, 2.02, 9), tol = 0.05)
+  m <- .greedy_match(c(1, 2, 3), c(1.01, 2.02, 9), tol = 0.05)
   expect_equal(m, c(1L, 2L, NA_integer_))
 })
 

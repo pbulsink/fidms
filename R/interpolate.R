@@ -23,7 +23,7 @@
   if (is.null(skip)) {
     skip <- rep(FALSE, nrow(peaks))
   }
-  peaks$origin <- ifelse(peaks$identified, "msd", NA_character_)
+  peaks$origin <- ifelse(peaks$identified, "msd", NA_character_) # ry: ignore[RY106]
   # Anchors for interpolation/extrapolation are genuine library
   # identifications only; `skip`ped (class-ion-resolved but formula-less)
   # peaks must not serve as a bracketing reference point.
@@ -106,5 +106,5 @@
 
 .build_formula <- function(c_n, h_n, o_n) {
   part <- function(sym, n) ifelse(n > 0, paste0(sym, ifelse(n == 1, "", n)), "")
-  paste(part("C", c_n), part("H", h_n), part("O", o_n))
+  trimws(paste(part("C", c_n), part("H", h_n), part("O", o_n)))
 }

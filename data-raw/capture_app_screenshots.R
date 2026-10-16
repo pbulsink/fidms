@@ -1,9 +1,9 @@
 # Dev-only: captures the screenshots embedded in vignettes/real_sample_workflow.Rmd.
-# Run from the package root; needs the local (gitignored) D319.D directory.
+# Run from the package root; needs the local (gitignored) diesel.D directory.
 library(shinytest2)
 
 pkg <- normalizePath(".", winslash = "/")
-d_dir <- normalizePath("D319.D", winslash = "/")
+d_dir <- normalizePath("diesel.D", winslash = "/")
 out <- file.path(pkg, "vignettes", "images")
 unlink(out, recursive = TRUE)
 dir.create(out, showWarnings = FALSE, recursive = TRUE)
@@ -31,7 +31,7 @@ shot("01_app_start.png")
 
 app$set_inputs(
   d_path = d_dir,
-  sample_id = "D319",
+  sample_id = "Diesel-1",
   sample_name = "Demo fuel sample",
   project_code = "DEMO",
   analyst = "ab/cd",

@@ -1,8 +1,8 @@
-# Dev-only: renders the D319 PDF report and saves page 1 for the vignette.
+# Dev-only: renders the example diesel PDF report and saves page 1 for the vignette.
 # Needs Quarto + LaTeX. Run from the package root after devtools::load_all().
 v <- "vignettes"
-info <- fidms:::.sample_info(
-  "D319",
+info <- sample_info(
+  "example diesel",
   "Demo fuel sample",
   "DEMO",
   "PB",
@@ -20,7 +20,7 @@ res <- summarize_report(
   info,
   shift = prep$shift
 )
-pdf <- write_pdf_report(res, file.path(tempdir(), "report_D319.pdf"))
+pdf <- write_pdf_report(res, file.path(tempdir(), "report_diesel.pdf"))
 pdftools::pdf_convert(
   pdf,
   pages = 1,

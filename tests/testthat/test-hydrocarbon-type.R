@@ -320,7 +320,7 @@ test_that(".read_ms_scan_matrix reads a real Agilent .D directory when available
   # The raw .D directory (~750MB, mostly vendor Results/Qual output) lives at
   # the project root and is deliberately not copied into tests/fixtures;
   # this test is skipped wherever it is absent (e.g. CI, other machines).
-  d_path <- testthat::test_path("..", "..", "D319.D")
+  d_path <- testthat::test_path("..", "..", "diesel.D")
   skip_if_not(
     dir.exists(d_path),
     "No .D directory available for raw MS ingestion test"

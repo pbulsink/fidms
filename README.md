@@ -29,7 +29,7 @@ flowchart LR
 library(fidms)
 
 info <- sample_info(
-  sample_id = "D319", sample_name = "Pyrolysis oil", project_code = "MD",
+  sample_id = "Diesel-1", sample_name = "Pyrolysis oil", project_code = "MD",
   analyst = c("nrn", "pbulsink"), density = 0.8519,
   methanol_wt_pct = 0, water_wt_pct = 0, dilution = 1
 )
@@ -39,8 +39,8 @@ result <- process_sample(
   info = info, style = "slope"
 )
 
-write_excel_report(result)   # MD_D319_GC-MS-FID.xlsx
-write_pdf_report(result)     # MD_D319_GC-MS-FID.pdf (needs Quarto + LaTeX)
+write_excel_report(result)   # MD_diesel_GC-MS-FID.xlsx
+write_pdf_report(result)     # MD_diesel_GC-MS-FID.pdf (needs Quarto + LaTeX)
 ```
 
 Or run the local Shiny front end:
@@ -153,5 +153,5 @@ on the sample excerpt it rejects dichloromethane despite its 22% area share and
   `longtable`; review against a real full-size render.
 - Golden-file regression against the macro's output for a full real sample
   (work breakdown item 10) is not yet done — the sample CSVs in the repo are
-  10-peak excerpts, not the full run behind `MD_D319_GC-MS-FID.xlsx`.
+  10-peak excerpts, not the full run behind `MD_diesel_GC-MS-FID.xlsx`.
 - Deferred: calibration-report import and local persistence (item 12).

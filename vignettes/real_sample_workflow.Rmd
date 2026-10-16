@@ -13,9 +13,9 @@ knitr::opts_chunk$set(collapse = TRUE, comment = "#>", fig.width = 6, fig.height
 # The three peak-table CSVs ship with the vignette. The raw scan file
 # (data.ms) is large client data kept outside the package, so the class-ion
 # section only runs when the original .D directory can be found.
-d_dir <- Sys.getenv("FIDMS_D319", unset = "")
+d_dir <- Sys.getenv("FIDMS_diesel", unset = "")
 if (!nzchar(d_dir)) {
-  candidates <- c("../D319.D", "D319.D")
+  candidates <- c("../diesel.D", "diesel.D")
   d_dir <- candidates[dir.exists(candidates)][1]
 }
 have_raw <- !is.na(d_dir) && file.exists(file.path(d_dir, "data.ms"))
@@ -27,18 +27,16 @@ library(fidms)
 A fuel or process sample leaves the instrument as three separate things: an FID
 peak table (quantitative, but anonymous), an MSD peak table (identified, but
 on a slightly different time axis), and a library-search export that names the
-MSD peaks. A client wants one table of compounds with amounts, plus a summary of
-chemical families and elements.
+MSD peaks. `fidms` is a package of tools used to automate data analysis of these. 
 
-`fidms` replaces the old "Automated Polyarc" Excel/VBA macro for this job. This
-vignette follows one real sample, `D319`, end to end, first in code and then
-through the local Shiny app. Along the way it points out each place where the
-analyst has to supply something the instrument files cannot know.
+This vignette follows one real sample, a diesel fuel, end to end, first in code 
+and then through the local Shiny app. Along the way it points out each place 
+where the analyst has to supply something the instrument files cannot know.
 
 ## What goes in
 
 The three exports `fidms` reads are bundled with this vignette as CSV files,
-copied from the Agilent `D319.D` data directory. The raw `data.ms` scan file in
+copied from an example Agilent `diesel.D` data directory. The raw `data.ms` scan file in
 that directory enables the optional hydrocarbon-class analysis; it is not
 bundled, so that section only runs where the `.D` directory is available.
 
@@ -65,8 +63,8 @@ them are in the instrument files:
 | Dilution factor | Corrects amounts for any dilution before injection |
 
 ```{r sample-info}
-info <- fidms:::.sample_info(
-  sample_id       = "D319",
+info <- sample_info(
+  sample_id       = "Diesel",
   sample_name     = "Demo fuel sample",
   project_code    = "DEMO",
   analyst         = "PB",
@@ -223,7 +221,7 @@ Both writers take the summarised result. The Excel report has a Total Compound
 sheet and a Summary sheet.
 
 ```{r excel-report}
-xlsx <- write_excel_report(res, file.path(tempdir(), "DEMO_D319_GC-MS-FID.xlsx"))
+xlsx <- write_excel_report(res, file.path(tempdir(), "DEMO_Diesel_GC-MS-FID.xlsx"))
 openxlsx::getSheetNames(xlsx)
 ```
 
@@ -233,7 +231,7 @@ built; the image after it is the first page of the report produced from this
 sample.
 
 ```{r pdf-report, eval = FALSE}
-write_pdf_report(res, "DEMO_D319_GC-MS-FID.pdf")
+write_pdf_report(res, "DEMO_Diesel_GC-MS-FID.pdf")
 ```
 
 ![First page of the generated PDF: sample header and QC counts, followed by the Total Compound table.](images/07_pdf_report_page1.png)
@@ -254,7 +252,7 @@ fidms::run_app()
 ```
 
 The app needs `shiny`, `bslib` and `DT`. The screenshots below were captured
-from a real run on `D319.D`.
+from a real run on `diesel.D`.
 
 ### 1. Point the app at the data
 

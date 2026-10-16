@@ -2,6 +2,12 @@
 ^\.Rproj\.user$
 design/
 reference/
-^data-raw/capture_app_screenshots\.R$
+dev/
+^data-raw/
+^AGENTS\.md$
+^cobertura\.xml$
+^diesel\.D$
 ^vignettes/.*\.html$
-^data-raw/render_pdf_page\.R$
+^vignettes/.*\.pdf$
+^doc$
+^Meta$

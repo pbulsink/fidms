@@ -4,7 +4,7 @@
 #' align, identify, merge, interpolate, quantify and summarise.
 #'
 #' @param fid_path,msd_path,search_path Paths to the three CSV exports.
-#' @param info Sample metadata from [.sample_info()].
+#' @param info Sample metadata from [sample_info()].
 #' @param params Processing parameters from [fidms_params()].
 #' @param style Calibration style, see [calibrate()].
 #' @param include_solvents Whether solvents count toward the summary.

@@ -60,11 +60,11 @@ test_that("oxygenates fall back to hydrocarbon targets when none are calibrated"
 
 test_that(".polyarc_ratio scales by area, carbon number and molar mass", {
   p <- make_peaks()
-  r <- fidms:::.polyarc_ratio(p, 2L, 1L)
+  r <- .polyarc_ratio(p, 2L, 1L)
   expected <- (p$area[2] / p$area[1]) * (p$C[1] / p$C[2]) * (p$mw[2] / p$mw[1])
   expect_equal(r, expected)
   # a peak identical to its reference gets a ratio of exactly 1
-  expect_equal(fidms:::.polyarc_ratio(p, 1L, 1L), 1)
+  expect_equal(.polyarc_ratio(p, 1L, 1L), 1)
 })
 
 test_that("relative peaks are scaled off their governing target", {
@@ -73,7 +73,7 @@ test_that("relative peaks are scaled off their governing target", {
   expect_equal(out$quant_basis, c("Target", "Relative", "Target", "Relative"))
   expect_equal(
     out$amount_ug_ml[2],
-    out$amount_ug_ml[1] * fidms:::.polyarc_ratio(p, 2L, 1L)
+    out$amount_ug_ml[1] * .polyarc_ratio(p, 2L, 1L)
   )
 })
 
@@ -114,7 +114,7 @@ test_that(".recovery_excluded drops methanol only when reported separately", {
 
 test_that(".calibration_recovery reports every style", {
   p <- make_peaks()
-  info <- .sample_info(
+  info <- sample_info(
     "X",
     density = 0.85,
     methanol_wt_pct = 2,

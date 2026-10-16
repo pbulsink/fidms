@@ -15,7 +15,7 @@
 \arguments{
 \item{peaks}{Peak table from \code{\link[=.interpolate_unknowns]{.interpolate_unknowns()}}.}
 
-\item{info}{Sample metadata from \code{\link[=.sample_info]{.sample_info()}}.}
+\item{info}{Sample metadata from \code{\link[=sample_info]{sample_info()}}.}
 
 \item{targets}{Calibration target table, default \link{calibration_targets}.}
 

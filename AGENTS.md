@@ -9,7 +9,7 @@ R replacement for the "Automated Polyarc" Excel/VBA workflow that parses Agilent
 
 ## Package Overview
 
-Replaces the "Automated Polyarc" Excel/VBA workflow. Parses Agilent FID and MSD peak tables plus MSD library-search exports, aligns the FID and MSD retention-time axes, identifies and interpolates compounds, quantifies them against a calibration table, classifies them into chemical families, and writes the client-facing Total Compound and Summary reports as Excel or PDF. Includes a local Shiny front end.
+Replaces the "Automated Polyarc" Excel/VBA workflow. Parses Agilent FID and MSD peak tables plus MSD library-search exports, aligns the FID and MSD retention-time axes, identifies and interpolates compounds, quantifies them against a calibration table, classifies them into chemical families, and writes the client-facing Total Compound and Summary reports as Excel or PDF. Includes a local Shiny front end and a real-sample walkthrough vignette.
 
 ## Project Structure
 
@@ -37,15 +37,24 @@ Replaces the "Automated Polyarc" Excel/VBA workflow. Parses Agilent FID and MSD 
 - `sim_masses_oxygenate`, `oxygenate_response_matrix` - user-proposed oxygenate extension; the response matrix is an explicit NA-filled placeholder pending lab calibration data
 
 ### data-raw/ (Data Rebuild Scripts)
-- `lookup_tables.R` - rebuilds packaged lookup tables from `reference/caltable.csv` and `reference/rical.csv`
+- `lookup_tables.R` - rebuilds packaged lookup tables from `caltable.csv` and `rical.csv` (both now live in `data-raw/`, not `reference/`)
 - `atomic_weights.R`, `hydrocarbon_type.R` - source the atomic-weight table and the ASTM-derived class-ion matrices
+- `capture_app_screenshots.R` - dev-only shinytest2 script that regenerates the app screenshots in `vignettes/images/`; run from the package root, needs local `diesel.D`
+- `render_pdf_page.R` - dev-only; renders the example diesel PDF report and saves page 1 to `vignettes/images/07_pdf_report_page1.png` via `pdftools::pdf_convert()` (needs Quarto + LaTeX)
 
 ### inst/ (App and Report Template)
 - `app/app.R` - local Shiny app (serves via `run_app()`); client data never leaves the machine, do not add deployment targets
 - `report/report.qmd` - Quarto template rendered by `write_pdf_report()`
 
-### design/ (Design Documents)
-- `oxygenate-extension-design.md` - rationale for the proposed oxygenate-family extension
+### vignettes/ (Vignette)
+- `real_sample_workflow.Rmd` - "Processing a Real GC-MS/FID Sample": end-to-end walkthrough of the example diesel sample in code and through the Shiny app. Built with knitr (`VignetteBuilder: knitr`, html_vignette output); pre-built outputs are committed alongside it (`real_sample_workflow.html`, `Processing a Real GC-MS_FID Sample.pdf`)
+- Bundles the **full** example diesel peak-table CSVs (`FIDpeaks.csv`, `MSDpeaks.csv`, `MSDsearch.csv`) — complete sample runs, not the 10-peak test fixtures in `tests/testthat/fixtures/`
+- `images/` - app screenshots (01–06) and page 1 of the generated PDF report (07)
+
+Building the vignette:
+- Rebuild with `devtools::build_vignettes()` (or any R CMD build; `knitr` + `rmarkdown` are in Suggests). The class-ion section only evaluates when a example diesel `.D` directory is found (`FIDMS_diesel` env var, or `../diesel.D`, or `diesel.D`)
+- App screenshots: run `data-raw/capture_app_screenshots.R` from the package root — it drives a throwaway launcher (working-tree app via `pkgload::load_all()`) with shinytest2's `AppDriver` against local `diesel.D`, and rewrites all of `vignettes/images/01–06`. Rerun after any UI change
+- PDF first page: run `data-raw/render_pdf_page.R` from the package root after `devtools::load_all()` — needs Quarto + LaTeX; uses dev-only (undeclared) dependency `pdftools` to rasterize report page 1 at dpi 110
 
 Note: roxygen comments in `R/hydrocarbon_type.R` and `R/pipeline.R` cite `design/hydrocarbon-type-design.md`, which is not currently present in the repo; treat those citations as historical.
 
@@ -60,8 +69,9 @@ Note: roxygen comments in `R/hydrocarbon_type.R` and `R/pipeline.R` cite `design
 - `fixtures/` - 10-peak sample excerpts: `FIDpeaks.csv`, `MSDpeaks.csv`, `MSDsearch.csv` (copied from `reference/`; these are excerpts, not full sample runs)
 
 ### Local-only files (gitignored — present on this machine, absent in fresh clones or CI)
-- `reference/` - ASTM D2425-23/D2789-95/D8276 PDFs with `.png` screenshots of every table, the original `Automated Polyarc.xlsm`, full sample CSVs (`FIDpeaks.csv`, etc.), `MD_D319_GC-MS-FID.xlsx` (the macro's real output), and other reference material
-- `D319.D/` - a real Agilent `.D` raw-scan directory used to exercise the class-ion pipeline via `.read_ms_scan_matrix()`
+- `reference/` - ASTM D2425-23/D2789-95/D8276 PDFs with `.png` screenshots of every table, the original `Automated Polyarc.xlsm`, 10-peak sample CSV excerpts (`FIDpeaks.csv`, etc.), `MD_diesel_GC-MS-FID.xlsx` (the macro's real output), and other reference material
+- `diesel.D/` - a local Agilent `.D` raw-scan directory (diesel fuel sample) usable to exercise the class-ion pipeline via `.read_ms_scan_matrix()`. The original `diesel.D/` is no longer on this machine but is required by the vignette's class-ion section and by `data-raw/capture_app_screenshots.R`; restore it (or set `FIDMS_diesel`) to regenerate those
+- `dev/` - local-only development area: `oxygenate-extension-design.md` + `oxygenate-extension-record.md` (moved out of the former tracked `design/` dir), and `oxygenate_insilico_overlap.R`, a scratch analysis over `data-raw/combined_library.msp` (also gitignored)
 
 ## Architecture Summary
 
@@ -82,11 +92,11 @@ The package is a linear pipeline mirroring the VBA macro: parse CSVs, align FID/
 | `pipeline.R` | End-to-end orchestration; Total Compound table with optional class-ion columns | `process_sample()`, `prepare_peaks()`, `total_compound_table()` |
 | `reference_peak.R` | Internal-standard reference peak suggestion and quality gate | `.suggest_reference_peak()`, `.reference_peak_ok()` |
 | `report.R` | Two-sheet Excel writer; Quarto-rendered PDF writer | `write_excel_report()`, `write_pdf_report()` |
-| `summarize.R` | Sample metadata object; family/element/recovery summary and QC counts | `summarize_report()`, `.sample_info()` |
+| `summarize.R` | Sample metadata object; family/element/recovery summary and QC counts | `summarize_report()`, `sample_info()` |
 
 **Dependencies:**
 - **Imports:** chromConverter, dplyr, GCalignR, nnls, openxlsx, rlang, stats, stringr, tibble, tidyr, utils
-- **Suggested (optional features):** bslib, DT, quarto, shiny, testthat (>= 3.0.0), withr
+- **Suggested (optional features):** bslib, DT, knitr, quarto, rmarkdown, shiny, testthat (>= 3.0.0), withr
 
 **Dependency guards in code:** `GCalignR` (`rlang::check_installed`, only when `engine = "gcalignr"`), `chromConverter` and `nnls` (`requireNamespace()`, class-ion path), `shiny`/`bslib`/`DT` (app) and `quarto` (PDF reports). Tests of the Excel writer use `skip_if_not_installed("openxlsx")`; `withr` is used for temp files.
 
@@ -96,7 +106,7 @@ This section describes the typical development and testing workflow for this pac
 
 ### 1. Understand the Code Path
 - Read roxygen documentation in `R/*.R`; internal functions are dot-prefixed with `@keywords internal`, exported ones are listed in NAMESPACE
-- Trace data flow through the pipeline (parse → align → identify → merge → interpolate → calibrate → summarize → write) or through the class-ion side path (`design/oxygenate-extension-design.md` and the roxygen docs in `R/hydrocarbon_type.R` describe the evidence-tier A/B/C/D/M logic)
+- Trace data flow through the pipeline (parse → align → identify → merge → interpolate → calibrate → summarize → write) or through the class-ion side path (`dev/oxygenate-extension-design.md`, local-only, and the roxygen docs in `R/hydrocarbon_type.R` describe the evidence-tier A/B/C/D/M logic)
 - Identify which files are affected by the proposed change
 
 ### 2. Make Changes
@@ -116,6 +126,7 @@ This section describes the typical development and testing workflow for this pac
 - Regenerate man pages and NAMESPACE: `devtools::document()`
 - If a packaged dataset changes, rebuild it with the matching `data-raw/` script rather than editing `.rda` files by hand, then re-run `devtools::document()` for its dataset docs in `R/fidms-package.R`
 - Update the README pipeline diagram or VBA mapping table if user-facing behavior changes
+- If app UI or report layout changes, regenerate `vignettes/images/` with `data-raw/capture_app_screenshots.R` and/or `data-raw/render_pdf_page.R`, then rebuild the vignette (`devtools::build_vignettes()`)
 
 ### 5. Verify Build
 - Full package check: `devtools::check()` (or `R CMD check`)
@@ -173,5 +184,5 @@ From the README — do not "fix" these without confirmation:
 - The stored degree-6 RI polynomial and stored calibration coefficients/R² from the workbook are **not** ported; both are refit at runtime from reference points
 - Calibration levels with a zero response are below-detection points, excluded from fits rather than treated as observed zeros (confirmed with the analyst)
 - `engine = "grid"` vs `"gcalignr"`: the two engines are not expected to agree exactly and do not on the 10-peak excerpt; the production default is still an open item pending comparison on a full real sample
-- Golden-file regression against the macro's output for a full real sample is **not yet done** (the repo CSVs are excerpts, not the full run behind `MD_D319_GC-MS-FID.xlsx`)
+- Golden-file regression against the macro's output for a full real sample is **not yet done** (the repo CSVs are excerpts, not the full run behind `MD_diesel_GC-MS-FID.xlsx`)
 - Deferred: calibration-report import and local persistence

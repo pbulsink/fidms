@@ -2,7 +2,18 @@
 "_PACKAGE"
 
 #' @importFrom rlang .data
+#' @import utils
 NULL
+
+# Declare packaged data as global variables to satisfy R CMD check
+utils::globalVariables(c(
+  "atomic_weights",
+  "calibration_points",
+  "calibration_targets",
+  "chemical_family_terms",
+  "rical_reference_points",
+  "solvent_names"
+))
 
 #' Atomic weights
 #'
